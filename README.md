@@ -36,7 +36,7 @@
   ```
   GRUB_CMDLINE_LINUX="crashkernel=auto spectre_v2=retpoline rd.lvm.lv=centos_bgchun-labtop/root rhgb quiet modprobe.blacklist=nouveau default_hugepagesz=1G hugepagesz=1G hugepages=8 iommu=pt intel_iommu=on pci=assign-busses pci=realloc ixgbe.max_vfs=4"
   ```
-  Then you can check that youe node has 8 of pre-allocated hugepages and node adverties it.  
+  Then you can check that the node has 8 of pre-allocated hugepages and node adverties it.  
   
   You can easily get quantity of allocated hugepages from '/proc/meminfo'.
   ```
@@ -79,8 +79,8 @@
   ```
 
 - Request hugepages
-  - Now, it is time to request hugepages for a container. To consume hugepages, we have three ways to go, 1) shmget, 2) mmap with filebacking, 3) mmap with anonymous hugepages.
-  In this document, I recommend to choose the second way, because that is most simple way to consume hugepages on DPDK.
+  - Now, it is time to request hugepages for a container. To consume hugepages on Kubernetes, we have three ways to go, 1) shmget, 2) mmap with filebacking, 3) mmap with anonymous hugepages.
+  In this document, I recommend to choose the second way, because that is most simple way to consume hugepages on DPDK. and you can pass the hugetlbfs mmaped file path to DPDK lib by using `--huge-dir` EAL parameter. More details for EAL parameters are available on [here](#https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html).
   ```
   TBD: pod spec with mmap and filebacking
   ```
