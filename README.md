@@ -32,14 +32,54 @@
   ```
   default_hugepagesz=1G hugepagesz=1G hugepages=8
   ```
-  Below is the configuration of my testing server for DPDK.
+  Below is the configuration of my testing server ,which has only one socket, to test DPDK.
   ```
   GRUB_CMDLINE_LINUX="crashkernel=auto spectre_v2=retpoline rd.lvm.lv=centos_bgchun-labtop/root rhgb quiet modprobe.blacklist=nouveau default_hugepagesz=1G hugepagesz=1G hugepages=8 iommu=pt intel_iommu=on pci=assign-busses pci=realloc ixgbe.max_vfs=4"
+  ```
+  Then you can check that youe node has 8 of pre-allocated hugepages and node adverties it.  
+  
+  You can easily get quantity of allocated hugepages from '/proc/meminfo'.
+  ```
+  cat /proc/meminfo
+  ...
+  HugePages_Total:       8
+  HugePages_Free:        8
+  ...
+  ```
+  
+  If you have multi-socket machine and want to get quantity of allocated or free hugepages per NUMA node, try 'cat /sys/devices/system/node/node*/hugepages/hugepages-*/nr_hugepages and free_hugepages'.  
+  Here is brief result from two-socket machine.
+  ```
+  cat /sys/devices/system/node/node0/hugepages/hugepages-1048576kB/free_hugepages 
+  4
+  cat /sys/devices/system/node/node0/hugepages/hugepages-1048576kB/nr_hugepages 
+  4
+  cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/free_hugepages 
+  4
+  cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/nr_hugepages 
+  4
+  ```
+  
+  Below result shows that kubelet on the node says that it has 8Gi of allocatable 1GB Hugepages to master node.
+  ```
+  kubectl describe node
+  Capacity:
+    cpu:                       24
+    ephemeral-storage:         673705328Ki
+    hugepages-1Gi:             8Gi
+    intel.com/intel_sriov_pf:  2
+    memory:                    130516304Ki
+    pods:                      110
+  Allocatable:
+    cpu:                       24
+    ephemeral-storage:         620886829257
+    **hugepages-1Gi:             8Gi**
+    intel.com/intel_sriov_pf:  2
 
   ```
 
 - Request hugepages
-  - To consume hugepages, we have three ways to go, 1) shmget, 2) mmap with filebacking, 3) mmap with anonymous hugepages.
+  - Now, it is time to request hugepages for a container. To consume hugepages, we have three ways to go, 1) shmget, 2) mmap with filebacking, 3) mmap with anonymous hugepages.
   In this document, I recommend to choose the second way, because that is most simple way to consume hugepages on DPDK.
   ```
   TBD: pod spec with mmap and filebacking
