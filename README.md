@@ -80,9 +80,40 @@
 
 - Request hugepages
   - Now, it is time to request hugepages for a container. To consume hugepages on Kubernetes, we have three ways to go, 1) shmget, 2) mmap with filebacking, 3) mmap with anonymous hugepages.
-  In this document, I recommend to choose the second way, because that is most simple way to consume hugepages on DPDK. and you can pass the hugetlbfs mmaped file path to DPDK lib by using `--huge-dir` EAL parameter. More details for EAL parameters are available on [here](https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html).
+  In this document, I recommend to choose the second way, because that is most simple way to consume hugepages with DPDK. More details for comsuming huegepages on Kubernetes is available on [here](https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20190129-hugepages.md#user-stories-optional).
+  
+  The below Pod Spec shows that requesting 2Gi of 1Gbi hugepages with filebacking.
+  When user reqests hugepage with filebacking, Kubernetes makes emptyDir volume on the node then maps it to a hugetlbfs mount path of the node. It means that your container mounts hugetlbfs using Kubernetes volume system and you can create a file on it. The only left thing to do is consuming hugepages. For DPDK, you can pass the mounted path(in below example, it is `/hugepages`) over `--huge-dir`EAL Parameter. More details for EAL parameters are available on [here](https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html).
   ```
-  TBD: pod spec with mmap and filebacking
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: testpmd-filebacking-with-mlock
+  spec:
+    containers:
+    - name: testpmd
+      image: bgchun/testpmd
+      command: [ "/bin/bash", "-c", "--" ]
+      args: [ "while true; do sleep 300000; done;" ]
+      securityContext:
+       capabilities:
+         add: ["IPC_LOCK"]
+      volumeMounts:
+      - mountPath: /hugepages
+        name: hugepage
+      resources:
+        requests:
+          memory: "1Gi"
+          hugepages-1Gi: "2Gi"
+          intel.com/intel_sriov_pf: '1'
+        limits:
+          memory: "1Gi"
+          hugepages-1Gi: "2Gi"
+          intel.com/intel_sriov_pf: '1'
+    volumes:
+    - name: hugepage
+      emptyDir:
+        medium: HugePages
   ```
 - Consume hugepages with filebacking
   ```
