@@ -117,10 +117,17 @@
       emptyDir:
         medium: HugePages
   ```
- For Non-DPDK application, 
- Consume hugepages with filebacking
+ For Non-DPDK application, as i mentioned above, there is three ways to consume hugepages.
+ Below example shows comsuming hugepages using filebacking, It is very simple: open & mmap.
+ Below is the part of mmap sample on linux kernel. See [here](https://github.sec.samsung.net/RS7-EdgeComputing/hugepage-samples/blob/master/poc/mmap_filebacking.cc) to get the smaple.
+ There are two more smaples those consume hugepages over shmget(see [here](https://github.com/torvalds/linux/blob/master/tools/testing/selftests/vm/hugepage-shm.c)) and mmap with anonymous mapping(see [here](https://github.com/torvalds/linux/blob/master/tools/testing/selftests/vm/map_hugetlb.c)).
   ```
-  TBD: code
+  int fd = open(/*FILE under hugetlbfs*/, O_CREAT | O_RDWR, 0755);
+  
+  // On success, mmap() returns a pointer to the mapped area.
+	// On error, the value MAP_FAILED is returned, and errno is set to indicate the cause of the error.
+	// http://man7.org/linux/man-pages/man2/mmap.2.html
+  void *addr = mmap(NULL, (size), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
   ```
 
 ### How to configure NIC with/without SR-IOV
