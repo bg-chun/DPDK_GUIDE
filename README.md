@@ -27,9 +27,15 @@
 - Kubernetes support to use pre-allocated hugepages on a node. If pre-allocated hugepages are available on a node, kubelet detects it automatically and adverties them as an allocatable node resource.
 
 - Configure pre-allocated hugepages
-  To configure 
+  To configure pre-allocated hugepages, we have to specify default size of hugepages and quantity of pages on a boot parameters.
+  For example, below will trigger to kernel to allocate 8 of 1GB hugepages on your node. If you have multi-socket machine like a two socket, kernel will allocate 4 of hugepages on each socket.
   ```
-  TBD: boot params example
+  default_hugepagesz=1G hugepagesz=1G hugepages=8
+  ```
+  Below is the configuration of my testing server for DPDK.
+  ```
+  GRUB_CMDLINE_LINUX="crashkernel=auto spectre_v2=retpoline rd.lvm.lv=centos_bgchun-labtop/root rhgb quiet modprobe.blacklist=nouveau default_hugepagesz=1G hugepagesz=1G hugepages=8 iommu=pt intel_iommu=on pci=assign-busses pci=realloc ixgbe.max_vfs=4"
+
   ```
 
 - Request hugepages
