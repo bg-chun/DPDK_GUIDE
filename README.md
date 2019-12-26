@@ -80,7 +80,7 @@
 
 - Request hugepages
   - Now, it is time to request hugepages for a container. To consume hugepages on Kubernetes, we have three ways to go, 1) shmget, 2) mmap with filebacking, 3) mmap with anonymous hugepages.
-  In this document, I recommend to choose the second way, because that is most simple way to consume hugepages on DPDK. and you can pass the hugetlbfs mmaped file path to DPDK lib by using `--huge-dir` EAL parameter. More details for EAL parameters are available on [here](#https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html).
+  In this document, I recommend to choose the second way, because that is most simple way to consume hugepages on DPDK. and you can pass the hugetlbfs mmaped file path to DPDK lib by using `--huge-dir` EAL parameter. More details for EAL parameters are available on [here](https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html).
   ```
   TBD: pod spec with mmap and filebacking
   ```
