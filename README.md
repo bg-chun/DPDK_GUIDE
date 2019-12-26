@@ -83,7 +83,9 @@
   In this document, I recommend to choose the second way, because that is most simple way to consume hugepages with DPDK. More details for comsuming huegepages on Kubernetes is available on [here](https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20190129-hugepages.md#user-stories-optional).
   
   The below Pod Spec shows that requesting 2Gi of 1Gbi hugepages with filebacking.
-  When user reqests hugepage with filebacking, Kubernetes makes emptyDir volume on the node then maps it to a hugetlbfs mount path of the node. It means that your container mounts hugetlbfs using Kubernetes volume system and you can create a file on it. The only left thing to do is consuming hugepages. For DPDK, you can pass the mounted path(in below example, it is `/hugepages`) over `--huge-dir`EAL Parameter. More details for EAL parameters are available on [here](https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html).
+  When user reqests hugepage with filebacking, Kubernetes creates emptyDir volume on the node then maps it to a hugetlbfs mount path of the node. It means that your container mounts hugetlbfs using Kubernetes volume system and you can create a file on it. The only left thing to do is consuming hugepages.
+  
+  For DPDK, you can pass the mounted path(in below example, it is `/hugepages`, see volumeMounts and Volumes section) over `--huge-dir`EAL Parameter. More details for EAL parameters are available on [here](https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html).
   ```
   apiVersion: v1
   kind: Pod
@@ -115,12 +117,10 @@
       emptyDir:
         medium: HugePages
   ```
-- Consume hugepages with filebacking
+ For Non-DPDK application, 
+ Consume hugepages with filebacking
   ```
   TBD: code
-  ```
-  ```
-  TBD: DPDK sample, testPMD 
   ```
 
 ### How to configure NIC with/without SR-IOV
