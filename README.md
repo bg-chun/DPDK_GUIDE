@@ -9,23 +9,39 @@
 ## How to get these things on Kubernetes?
 
 ### Machine Configuration
-- TBD: bios setting(vt-d), kernel configuration(iommu, sriov, hugepages)
+- TBD: BIOS setting(vt-d), kernel configuration(iommu, sriov, hugepages)
 
 ### CPU Pinning
 - Kubernetes has CPU Manager that is internal component of Kubelet and provides exlusive cpu allocation capabilitiy.
 
 - Configure CPU Manager
+  TBD: static policy
 
   ```
   TBD
   ```
 
 - Request Exclusive CPU
+  To request exclusive CPU usage, there are two things to keep in mind. First, The pod must have Guaranteed QoS class. Second, the request for exclusive CPUs must be made with the integer number.  
+  The Guaranteed QoS class requires that every container in the Pod must have: 1) memory limit/request 2) CPU limit/request and they must be the same. [Here](https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/) is more details for QoS classes in Kubernetes.  
+  Below example shows the container spec that request the integer number of exclusive CPUs and the equal amount of CPUs and memory for Guaranteed QoS Class. [Here](https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy) is more examples those request exlusive CPU usage.
   ```
-  TBD
+  spec:
+  containers:
+  - name: test
+    image: test
+    resources:
+      limits:
+        cpu: "2"
+        memory: "1Gi"
+      limits:
+        cpu: "2"
+        memory: "1Gi"
   ```
 
 - How to get container's CPU Affinity?
+  Sometimes we have to know which CPU cores are assigned for a container to perform thread level CPU Pinning.
+  
 
 ### Hugepages support
 - Kubernetes support to use pre-allocated hugepages on a node. If pre-allocated hugepages are available on a node, kubelet detects it automatically and adverties them as an allocatable node resource.
