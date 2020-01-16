@@ -157,7 +157,7 @@
 ## How to containerize DPDK App.
 TBD: here is the best example: https://github.com/pliurh/Kubecon2019-DEMO/blob/master/Dockerfile
 
-## Something little bit helpful to manager NFV Cluster
+## Something little bit helpful to manage NFV Cluster
 
 ### Node Allocatable Feature
 
